@@ -5,16 +5,16 @@ import { Container, Card, Button, Form } from 'react-bootstrap';
 
 const StudentsList = () => {
   const [students, setStudents] = useState([]);
-
+  const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [batch_no, setBatchNo] = useState('');
   const [course_name, setCourseName] = useState('');
   const [roll_no, setRollNo] = useState('');
   const [semester, setSemester] = useState('');
   const [grade, setGrade] = useState('');
+  const [flag, setFlag] = useState(false);
 
   const handleAddStudent = () => {
-    // Implement the logic for adding a new student
     const newStudent = {
       name: name,
       batch_no: batch_no,
@@ -25,13 +25,9 @@ const StudentsList = () => {
     };
 
     console.log('Add student:', newStudent);
-    // Send a POST request to add the new student
     axios.post('http://localhost:3000/students/add', newStudent)
       .then(response => {
         console.log('Student added successfully:', response.data);
-        // Redirect back to the students list page
-        // You can use react-router-dom's useHistory here
-        // Or any other navigation method you prefer
         window.location.reload();
       })
       .catch(error => {
@@ -40,7 +36,6 @@ const StudentsList = () => {
   };
 
   useEffect(() => {
-    // Fetch students data from the API
     axios.get('http://localhost:3000/students')
       .then(response => {
         setStudents(response.data);
@@ -50,19 +45,53 @@ const StudentsList = () => {
       });
   }, []);
 
-  const handleUpdate = (studentId) => {
-    // Implement the logic for updating a student
-    console.log(`Update student with ID: ${studentId}`);
+  const handleUpdate = (studentId, name, semester, batch_no, course_name, roll_no, grade) => {
+    console.log(`Update student with ID: ${studentId}, ${name}, ${batch_no}, ${course_name}, ${roll_no}, ${grade}`);
+    const updatedStudent = {
+      name: name,
+      batch_no: batch_no,
+      course_name: course_name,
+      roll_no: roll_no,
+      grade: grade,
+      semester: semester
+    };
+    console.log('Update student:', updatedStudent);
+    setId(studentId);
+    setName(name);
+    setBatchNo(batch_no);
+    setCourseName(course_name);
+    setRollNo(roll_no);
+    setGrade(grade);
+    setSemester(semester);
+    setFlag(true);
+  };
 
+  const updateStudent = () => {
+    const updatedStudent = {
+      name: name,
+      batch_no: batch_no,
+      course_name: course_name,
+      roll_no: roll_no,
+      grade: grade,
+      semester: semester
+    };
+    console.log('Update student:', updatedStudent);
+    axios.put(`http://localhost:3000/students/update/${id}`, updatedStudent)
+      .then(response => {
+        console.log('Student updated successfully:', response.data);
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error('Error updating student:', error);
+      });
+    setFlag(false);
   };
 
   const handleDelete = async (studentId) => {
-    // Implement the logic for deleting a student
     console.log(`Delete student with ID: ${studentId}`);
     const response = await axios.delete(`http://localhost:3000/students/delete/${studentId}`);
     console.log(response);
     window.location.reload();
-
   };
 
   return (
@@ -75,13 +104,16 @@ const StudentsList = () => {
             <Card.Text>
               Batch: {student.batch_no}, Course: {student.course_name}, Roll No: {student.roll_no}, Grade: {student.grade}
             </Card.Text>
-            <Button variant="primary" onClick={() => handleUpdate(student._id)}>Update</Button>{' '}
+            <Card.Text>
+              Semester: {student.semester}
+            </Card.Text>
+            <Button variant="primary" onClick={() => handleUpdate(student._id, student.name, student.semester, student.batch_no, student.course_name, student.roll_no, student.grade)}>Update</Button>{' '}
             <Button variant="danger" onClick={() => handleDelete(student._id)}>Delete</Button>
           </Card.Body>
         </Card>
       ))}
 
-      <h1 className="mb-4">Add Student</h1>
+      {!flag ? <h1 className="mb-4">Add Student</h1> : <h1 className="mb-4">Update Student</h1>}
       <Form>
         <Form.Group className="mb-3">
           <Form.Label>Name</Form.Label>
@@ -107,7 +139,8 @@ const StudentsList = () => {
           <Form.Label>Grade</Form.Label>
           <Form.Control type="text" name="grade" value={grade} onChange={(e) => setGrade(e.target.value)} />
         </Form.Group>
-        <Button variant="primary" onClick={handleAddStudent}>Add Student</Button>
+        <br />
+        {!flag ? <Button variant="primary" onClick={handleAddStudent}>Add Student</Button> : <div><Button variant="primary" onClick={updateStudent}>Update Student</Button> <Button variant='danger' onClick={() => { setFlag(false); setBatchNo(''); setCourseName(''); setGrade(''); setId(''); setRollNo(''); setSemester(''); setName('') }}>Cancel</Button></div>}
       </Form>
     </Container>
   );
