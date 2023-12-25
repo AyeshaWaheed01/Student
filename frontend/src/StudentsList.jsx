@@ -98,23 +98,30 @@ const StudentsList = () => {
     <Container>
       <h1 className="mt-4 mb-4">Students List</h1>
       {students.map(student => (
-        <Card key={student._id} className="mb-3" style={{ boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-          <Card.Body>
-            <Card.Title>{student.name}</Card.Title>
-            <Card.Text>
-              Batch: {student.batch_no}, Course: {student.course_name}, Roll No: {student.roll_no}, Grade: {student.grade}
-            </Card.Text>
-            <Card.Text>
-              Semester: {student.semester}
-            </Card.Text>
-            <Button variant="primary" onClick={() => handleUpdate(student._id, student.name, student.semester, student.batch_no, student.course_name, student.roll_no, student.grade)}>Update</Button>{' '}
-            <Button variant="danger" onClick={() => handleDelete(student._id)}>Delete</Button>
-          </Card.Body>
-        </Card>
+        <div key={student._id}>
+          <Card className="mb-3" style={{ boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.3)', padding: 20, borderRadius: 10 }}>
+            <Card.Body>
+              <Card.Title>{student.name}</Card.Title>
+              <Card.Text>
+                Batch: {student.batch_no}, Course: {student.course_name}, Roll No: {student.roll_no}, Grade: {student.grade}
+              </Card.Text>
+              <Card.Text>
+                Semester: {student.semester}
+              </Card.Text>
+
+              <Button variant="primary" onClick={() => handleUpdate(student._id, student.name, student.semester, student.batch_no, student.course_name, student.roll_no, student.grade)}>Update</Button>{' '}
+              <Button variant="danger" onClick={() => handleDelete(student._id)}>Delete</Button>
+
+
+            </Card.Body>
+
+          </Card>
+          <br/>
+        </div>
       ))}
 
       {!flag ? <h1 className="mb-4">Add Student</h1> : <h1 className="mb-4">Update Student</h1>}
-      <Form>
+      <Form style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)', padding: 20, borderRadius: 10}}>
         <Form.Group className="mb-3">
           <Form.Label>Name</Form.Label>
           <Form.Control type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} />
@@ -142,7 +149,9 @@ const StudentsList = () => {
         <br />
         {!flag ? <Button variant="primary" onClick={handleAddStudent}>Add Student</Button> : <div><Button variant="primary" onClick={updateStudent}>Update Student</Button> <Button variant='danger' onClick={() => { setFlag(false); setBatchNo(''); setCourseName(''); setGrade(''); setId(''); setRollNo(''); setSemester(''); setName('') }}>Cancel</Button></div>}
       </Form>
+      <br></br>
     </Container>
+    
   );
 };
 
