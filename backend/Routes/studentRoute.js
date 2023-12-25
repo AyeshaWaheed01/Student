@@ -39,9 +39,10 @@ router.get('/', async (req, res) => {
   });
 
 
- app.put('/students/:id', async (req, res) => {
+ router.put('/update/:id', async (req, res) => {
   try {
     const studentId = req.params.id;
+    
     const { name, batch_no, course_name, roll_no, semester, grade } = req.body;
 
     // Validate required fields
@@ -72,4 +73,20 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.delete('/delete/:id', async (req, res) => {
+    try {
+      const studentId = req.params.id;
+  
+      const deletedStudent = await Student.findByIdAndDelete(studentId);
+  
+      if (!deletedStudent) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+  
+      res.json({ message: 'Student deleted successfully', deletedStudent });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
 module.exports = router
