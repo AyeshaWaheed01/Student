@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const express = require('express');
 const cors = require('cors'); // Add this line
 const bodyParser = require('body-parser');
-
+const studentRouter = require('./Routes/studentRoute');
 
 
 app = express();
@@ -13,7 +13,7 @@ app.use(cors({
 }));
 
 app.use(bodyParser.json());
-
+app.use("/students", studentRouter);
 const connection = () => {
     const uri = 'mongodb+srv://fa20bse008:fa20bse008@cluster0.1sfpbsf.mongodb.net/student?retryWrites=true&w=majority';
     mongoose.connect(uri);
